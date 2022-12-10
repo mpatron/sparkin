@@ -8,17 +8,20 @@ RUN update-alternatives --install "/usr/bin/python" "python" "$(which python3)" 
 
 # Fix the value of PYTHONHASHSEED
 # Note: this is needed when you use Python 3.3 or greater
-ENV SPARK_VERSION=3.0.2 \
-HADOOP_VERSION=3.2 \
+ENV SPARK_VERSION=3.3.1 \
+HADOOP_VERSION=3 \
 SPARK_HOME=/opt/spark \
 PYTHONHASHSEED=1
 
 # Download and uncompress spark from the apache archive
-RUN wget --no-verbose -O apache-spark.tgz "https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" \
-&& mkdir -p /opt/spark \
-&& tar -xf apache-spark.tgz -C /opt/spark --strip-components=1 \
-&& rm apache-spark.tgz
-
+# RUN wget --no-verbose -O apache-spark.tgz "https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" \
+# && mkdir -p /opt/spark \
+# && tar -xf apache-spark.tgz -C /opt/spark --strip-components=1 \
+# && rm apache-spark.tgz
+RUN wget -O apache-spark.tgz "https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz"
+RUN mkdir -p /opt/spark
+RUN tar -xf apache-spark.tgz -C /opt/spark --no-same-owner --strip-components=1
+RUN rm apache-spark.tgz
 
 # Apache spark environment
 FROM builder as apache-spark
@@ -35,7 +38,7 @@ SPARK_WORKER_PORT=7000 \
 SPARK_MASTER="spark://spark-master:7077" \
 SPARK_WORKLOAD="master"
 
-EXPOSE 8080 7077 6066
+EXPOSE 8080 7077 7000 6066
 
 RUN mkdir -p $SPARK_LOG_DIR && \
 touch $SPARK_MASTER_LOG && \
