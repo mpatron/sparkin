@@ -9,8 +9,8 @@ services:
        - ./apps:/opt/spark-apps
        - ./data:/opt/spark-data
     environment:
-      # - SPARK_LOCAL_IP=spark-master
-      - SPARK_LOCAL_IP=127.0.0.1
+      - SPARK_LOCAL_IP=spark-master
+      #- SPARK_LOCAL_IP=127.0.0.1
       - SPARK_WORKLOAD=master
   spark-worker-a:
     image: docker.io/mpatron/cluster-apache-spark:3.3.1

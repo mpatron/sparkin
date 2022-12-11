@@ -1,4 +1,5 @@
 https://dev.to/mvillarrealb/creating-a-spark-standalone-cluster-with-docker-and-docker-compose-2021-update-6l4
+https://github.com/mvillarrealb/docker-spark-cluster
 
 echo "unqualified-search-registries = ['registry.fedoraproject.org', 'registry.access.redhat.com', 'registry.centos.org', 'docker.io']" | sudo tee -a /etc/containers/registries.conf
 export DOCKER_HOST="unix:$XDG_RUNTIME_DIR/podman/podman.sock"
