@@ -54,7 +54,7 @@ mpatron@ITEM-S76640:~/sparkin$ docker exec -it sparkin-spark-master-1 /opt/spark
 
 ~~~bash
 mpatron@ITEM-S76640:~/sparkin$ docker exec -it sparkin-spark-master-1 /bin/bash
-root@79072297a622:/opt/spark# /opt/spark/bin/spark-submit --master spark://spark-master:7077 --jars /opt/spark-apps/postgresql-42.2.22.jar --driver-memory 1G --execut> --driver-memory 1G --executor-memory 1G /opt/spark-apps/main.py
+root@79072297a622:/opt/spark# /opt/spark/bin/spark-submit --master spark://spark-master:7077 --jars /opt/spark-apps/postgresql-42.2.22.jar --driver-memory 1G --executor-memory 1G /opt/spark-apps/main.py
 ~~~
 
 Le répertoire /opt/spark-data du docker est mappé sur le répertoire sparkin/data dans le wsl2.
