@@ -1,13 +1,20 @@
-https://dev.to/mvillarrealb/creating-a-spark-standalone-cluster-with-docker-and-docker-compose-2021-update-6l4
-https://github.com/mvillarrealb/docker-spark-cluster
+# Exemple de programme spark avec docker-compose
 
-echo "unqualified-search-registries = ['registry.fedoraproject.org', 'registry.access.redhat.com', 'registry.centos.org', 'docker.io']" | sudo tee -a /etc/containers/registries.conf
-export DOCKER_HOST="unix:$XDG_RUNTIME_DIR/podman/podman.sock"
+## Installer docker
 
+Prendre docker [https://docs.docker.com/desktop/install/windows-install/]()  et l'installerr en activant le support de wsl2.
+Podman ne peut être utilisé car des problèmes survienne en version 3 sur Ubuntu 22.04LTS dans wsl2.
+
+## Compilation
+
+Dans le détail, cela donne :
+
+~~~bash
 mpatron@ITEM-S76640:~/sparkin$ docker build -t cluster-apache-spark:3.3.1 .
-mpatron@ITEM-S76640:~/sparkin$ podman login docker.io
-mpatron@ITEM-S76640:~/sparkin$ podman image tag localhost/cluster-apache-spark:3.3.1 docker.io/mpatron/cluster-apache-spark:3.3.1
-mpatron@ITEM-S76640:~/sparkin$ podman image push docker.io/mpatron/cluster-apache-spark:3.3.1
+mpatron@ITEM-S76640:~/sparkin$ docker login docker.io
+mpatron@ITEM-S76640:~/sparkin$ # Sous docker :
+mpatron@ITEM-S76640:~/sparkin$ docker image tag cluster-apache-spark:3.3.1 docker.io/mpatron/cluster-apache-spark:3.3.1
+mpatron@ITEM-S76640:~/sparkin$ docker image push docker.io/mpatron/cluster-apache-spark:3.3.1
 Getting image source signatures
 Copying blob 4b0596bdbd24 done
 Copying blob 764055ebc9a7 skipped: already exists
@@ -23,8 +30,86 @@ Copying blob 702737f78186 [=====>--------------------------------] 109.0MiB / 67
 Copying blob 48ed9df7486c done
 Writing manifest to image destination
 Storing signatures
+~~~
 
-docker build -t cluster-apache-spark:3.3.1 . && podman image tag localhost/cluster-apache-spark:3.3.1 docker.io/mpatron/cluster-apache-spark:3.3.1 && podman image push docker.io/mpatron/cluster-apache-spark:3.3.1
+ou en rapide
 
+~~~bash
+docker build -t cluster-apache-spark:3.3.1 . && docker image tag localhost/cluster-apache-spark:3.3.1 docker.io/mpatron/cluster-apache-spark:3.3.1 && docker image push docker.io/mpatron/cluster-apache-spark:3.3.1
+~~~
 
-mpatron@ITEM-S76640:~/sparkin$ sudo podman exec -it sparkin_spark-worker-a_1 /bin/bash
+Puis lancement
+
+~~~bash
+docker-compose up
+~~~
+
+## Obtention de la console spark-shell
+
+~~~bash
+mpatron@ITEM-S76640:~/sparkin$ docker exec -it sparkin-spark-master-1 /opt/spark/bin/spark-shell
+~~~
+
+## Lancement d'un spark submit
+
+~~~bash
+mpatron@ITEM-S76640:~/sparkin$ docker exec -it sparkin-spark-master-1 /bin/bash
+root@79072297a622:/opt/spark# /opt/spark/bin/spark-submit --master spark://spark-master:7077 --jars /opt/spark-apps/postgresql-42.2.22.jar --driver-memory 1G --execut> --driver-memory 1G --executor-memory 1G /opt/spark-apps/main.py
+~~~
+
+Le répertoire /opt/spark-data du docker est mappé sur le répertoire sparkin/data dans le wsl2.
+
+Pour tester postgreSQL prendre [https://www.pgadmin.org/download/]().
+
+## Dans le futur avec podman
+
+~~~bash
+echo "unqualified-search-registries = ['registry.fedoraproject.org', 'registry.access.redhat.com', 'registry.centos.org', 'docker.io']" | sudo tee -a /etc/containers/registries.conf
+export DOCKER_HOST="unix:$XDG_RUNTIME_DIR/podman/podman.sock"
+~~~
+
+Attention il y a du bug dans l'air, sous podman :
+
+~~~bash
+mpatron@ITEM-S76640:~/sparkin$ podman image tag localhost/cluster-apache-spark:3.3.1 docker.io/mpatron/cluster-apache-spark:3.3.1
+~~~
+
+Alors que sous docker c'est :
+
+~~~bash
+mpatron@ITEM-S76640:~/sparkin$ docker image tag cluster-apache-spark:3.3.1 docker.io/mpatron/cluster-apache-spark:3.3.1
+~~~
+
+## Encore plus de donnée...
+
+Il y du plus gros volume de donnée sur [http://web.mta.info/developers/MTA-Bus-Time-historical-data.html](). Et téléchargeable par bash en faisant :
+
+~~~bash
+curl -OL -o /opt/spark-data/MTA_2014_08_01.csv.xz http://s3.amazonaws.com/MTABusTime/AppQuest3/MTA-Bus-Time_.2014-08-01.txt.xz
+xz -d /opt/spark-data/MTA_2014_08_01.csv.xz
+~~~
+
+Ne pas oublier de mettre le driver postgresql dans le spark submit
+
+~~~bash
+/opt/spark/bin/spark-submit --master spark://spark-master:7077 --jars /opt/spark-apps/postgresql-42.2.22.jar --driver-memory 1G --executor-memory 1G /opt/spark-apps/main.py
+~~~
+
+## Retoyage
+
+~~~bash
+#Install docker
+docker kill $(docker ps -q)
+docker rm $(docker ps -a -q)
+docker rmi $(docker images -q)
+docker image prune --all --force
+docker container prune --force
+docker volume prune --force
+docker network prune --force
+docker system prune --all --force
+~~~
+
+## Sources
+
+- [https://dev.to/mvillarrealb/creating-a-spark-standalone-cluster-with-docker-and-docker-compose-2021-update-6l4]()
+- [https://github.com/mvillarrealb/docker-spark-cluster]()

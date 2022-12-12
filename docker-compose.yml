@@ -53,4 +53,4 @@ services:
     ports: 
       - "5432:5432"
     environment: 
-      - POSTGRES_PASSWORD=casa1234
+      - POSTGRES_PASSWORD=H3ll0W0rld!
