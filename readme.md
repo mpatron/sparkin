@@ -48,6 +48,8 @@ docker-compose up
 
 ~~~bash
 mpatron@ITEM-S76640:~/sparkin$ docker exec -it sparkin-spark-master-1 /opt/spark/bin/spark-shell
+# ou
+mpatron@ITEM-S76640:~/sparkin$ docker-compose exec spark-master bash
 ~~~
 
 ## Lancement d'un spark submit
