@@ -97,7 +97,19 @@ Ne pas oublier de mettre le driver postgresql dans le spark submit
 /opt/spark/bin/spark-submit --master spark://spark-master:7077 --jars /opt/spark-apps/postgresql-42.2.22.jar --driver-memory 1G --executor-memory 1G /opt/spark-apps/main.py
 ~~~
 
-## Retoyage
+## SQL Client
+
+Avec [https://squirrel-sql.sourceforge.io/]()
+
+- url: jdbc:postgresql://localhost:5432/postgres
+- login: postgres
+- password: H3ll0W0rld!
+
+Avec le client standard de postgres
+
+- psql -h localhost -U postgres
+
+## Netoyage
 
 ~~~bash
 #Install docker
