@@ -35,7 +35,7 @@ Storing signatures
 ou en rapide
 
 ~~~bash
-docker build -t cluster-apache-spark:3.3.1 . && docker image tag localhost/cluster-apache-spark:3.3.1 docker.io/mpatron/cluster-apache-spark:3.3.1 && docker image push docker.io/mpatron/cluster-apache-spark:3.3.1
+docker build -t cluster-apache-spark:3.3.1 . && docker image tag cluster-apache-spark:3.3.1 docker.io/mpatron/cluster-apache-spark:3.3.1 && docker image push docker.io/mpatron/cluster-apache-spark:3.3.1
 ~~~
 
 Puis lancement

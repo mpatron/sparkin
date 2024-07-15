@@ -16,9 +16,9 @@ def main():
     "password": "H3ll0W0rld!",
     "driver": "org.postgresql.Driver"
   }
-  file = "/opt/spark-data/MTA_2014_08_01.csv"
   sql,sc = init_spark()
 
+  file = "/opt/spark-data/MTA_2014_08_01.csv"
   df = sql.read.load(file,format = "csv", inferSchema="true", sep="\t", header="true"
       ) \
       .withColumn("report_hour",date_format(col("time_received"),"yyyy-MM-dd HH:00:00")) \
